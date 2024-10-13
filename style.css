@@ -1,3 +1,25 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100vw;   /* 100% of the viewport width */
+  height: 100vh;  /* 100% of the viewport height */
+  overflow: hidden;  /* Prevent scrollbars */
+}
+
+#app {
+  width: 100vw;   /* Fill the entire viewport width */
+  height: 100vh;  /* Fill the entire viewport height */
+}
+
+canvas {
+  display: block;
+  width: 100vw;   /* Ensure the canvas fills the full viewport width */
+  height: 100vh;  /* Ensure the canvas fills the full viewport height */
+}
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
