@@ -79,9 +79,9 @@ loader.load(
         scene.add(gltf.scene);
 
         // Optional: Position the model
-        gltf.scene.position.set(0, 0, 0);
+        gltf.scene.position.set(-5, 3, 0);
 
-        gltf.scene.rotation.x = Math.PI / 2;  // Rotate 90 degrees around the X axis
+        gltf.scene.rotation.x = Math.PI / 2;
     },
     function (xhr) {
         // Called while loading is in progress
