@@ -73,7 +73,7 @@ const loader = new GLTFLoader();
 
 // Load the .glb file
 loader.load(
-    'assets/5-66.glb', // Path to the .glb file
+    '/assets/5-66.glb', // Path to the .glb file
     function (gltf) {
         // Add the loaded model to the scene
         scene.add(gltf.scene);
