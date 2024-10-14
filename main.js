@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import './style.css'
+import { createCar, setupControls, updateCarMovement } from './car.js';
+import { createCamera } from './camera.js'; // Import the createCamera function
+import './style.css';
 
 //-----------------------------------------------------------------------------------------
 //
@@ -11,15 +11,10 @@ import './style.css'
 
 // Scene setup
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x1e7496); // Set background color to light blue
+scene.background = new THREE.Color(0x71BCE1);
 
 // Camera setup
-const aspectRatio = window.innerWidth / window.innerHeight;
-const camera = new THREE.PerspectiveCamera(75, aspectRatio, 0.1, 1000); // Adjusted near/far planes
-//camera.position.set(30, 30, 30);
-camera.position.set(0, 60, 0);
-camera.up.set(0, 0, 1);  // Z-axis as up
-camera.lookAt(0, 0, 0);
+const camera = createCamera(); // Create the camera
 
 // Light setup
 const ambientLight = new THREE.AmbientLight(0xffffff, 3);
@@ -32,39 +27,7 @@ scene.add(dirLight);
 // Renderer setup
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setClearColor(0x000000);  // Set background color to black
 document.body.appendChild(renderer.domElement);
-
-// orbit controll setup
-const controls = new OrbitControls(camera, renderer.domElement);
-
-// Initialize the GLTFLoader
-const loader = new GLTFLoader();
-
-// Resize handler
-window.addEventListener('resize', () => {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    renderer.setSize(width, height);
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
-});
-
-// Animation loop
-function animate() {
-    requestAnimationFrame(animate);
-
-    // Update the orbit controls for smooth movement
-    controls.update();
-
-    // Render the scene
-    renderer.render(scene, camera);
-
-    // Log the camera position to the console
-    //console.log(`Camera Position: X: ${camera.position.x}, Y: ${camera.position.y}, Z: ${camera.position.z}`);
-}
-
-animate();
 
 //-----------------------------------------------------------------------------------------
 //
@@ -72,54 +35,54 @@ animate();
 //
 //-----------------------------------------------------------------------------------------
 
-// Add AxesHelper to the main scene (size 5, adjust as needed)
+// Add AxesHelper to the main scene
 const axesHelper = new THREE.AxesHelper(100);
 scene.add(axesHelper);
 
 // Car setup
-const playerCar = Car();
-scene.add(playerCar);
+const playerCar = createCar(); // Create the car
+scene.add(playerCar); // Add the car to the scene
 
-function Car() {
-    const car = new THREE.Group();  // Create a group to hold the car model
+// Setup controls for the car
+setupControls();
 
-    // Load the .glb file
-    loader.load(
-        'assets/car_body.glb',
-        function (gltf) {
-            // Set the rotation and scale of the loaded model
-            gltf.scene.position.z = 7;
+// Tile setup
+const tiles = [];
+const tileSize = 40;
+const numberOfTiles = 5;
 
-            gltf.scene.rotation.x = Math.PI / 2;
-            gltf.scene.rotation.y = Math.PI / 2;
-            
-            const scaleFactor = 5; // Adjust this value as needed
-            gltf.scene.scale.set(scaleFactor, scaleFactor, scaleFactor);
-            
-            // Add the loaded model to the car group
-            car.add(gltf.scene);
-            
-            console.log("Car model loaded successfully.");
-        },
-        function (xhr) {
-            // Called while loading is in progress
-            console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-        },
-        function (error) {
-            // Called when there's an error
-            console.error('An error occurred while loading the car model:', error);
-        }
-    );
+for (let i = 0; i < numberOfTiles; i++) {
+    const tile = createTile();
+    tile.position.set(i * tileSize, 0, 0); // Place tiles in a row along the X-axis
+    scene.add(tile);
+    tiles.push(tile);
+}
 
-    // Wheels
-    const wheelMaterial = new THREE.MeshLambertMaterial({ color: 0x333333 });
-    const wheelGeometry = new THREE.CylinderGeometry(4.4, 4.4, 6, 20);
-    
-    for (let i = 0; i < 4; i++) {
-        const wheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
-        wheel.position.set(i < 2 ? -15.4 : 19, i % 2 === 0 ? -11 : 11, i < 2 ? 4.4 : 4);
-        car.add(wheel);
-    }
+// Animation loop
+function animate() {
+    requestAnimationFrame(animate);
 
-    return car;  // Return the car group which will eventually contain the model
-};
+    updateCarMovement();
+
+    camera.position.copy(playerCar.position).add(new THREE.Vector3(-20, 0, 16));
+    camera.lookAt(playerCar.position);
+
+    // Render the scene
+    renderer.render(scene, camera);
+}
+
+animate();
+
+//-----------------------------------------------------------------------------------------
+//
+//   *** Functions ***
+//
+//-----------------------------------------------------------------------------------------
+
+function createTile() {
+    const tileGeometry = new THREE.PlaneGeometry(40, 40);
+    const tileMaterial = new THREE.MeshBasicMaterial({ color: 0x808080 });
+    const tile = new THREE.Mesh(tileGeometry, tileMaterial);
+
+    return tile;
+}
