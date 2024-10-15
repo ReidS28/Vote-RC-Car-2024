@@ -1,7 +1,7 @@
-import * as THREE from 'three';
-import { createCar, setupControls, updateCarMovement } from './car.js';
-import { createCamera } from './camera.js'; // Import the createCamera function
-import './style.css';
+import * as THREE from "three";
+import { Car } from "./car.js";
+import { createCamera } from "./camera.js";
+import "./style.css";
 
 //-----------------------------------------------------------------------------------------
 //
@@ -11,7 +11,7 @@ import './style.css';
 
 // Scene setup
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x71BCE1);
+scene.background = new THREE.Color(0x71bce1);
 
 // Camera setup
 const camera = createCamera(); // Create the camera
@@ -29,6 +29,8 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+let manager = new THREE.LoadingManager();
+
 //-----------------------------------------------------------------------------------------
 //
 //   *** main code ***
@@ -40,11 +42,11 @@ const axesHelper = new THREE.AxesHelper(100);
 scene.add(axesHelper);
 
 // Car setup
-const playerCar = createCar(); // Create the car
-scene.add(playerCar); // Add the car to the scene
+const playerCar = new Car(manager);
+scene.add(playerCar.createCar()); // Add the car to the scene
 
 // Setup controls for the car
-setupControls();
+playerCar.setupControls();
 
 // Tile setup
 const tiles = [];
@@ -52,26 +54,31 @@ const tileSize = 40;
 const numberOfTiles = 5;
 
 for (let i = 0; i < numberOfTiles; i++) {
-    const tile = createTile();
-    tile.position.set(i * tileSize, 0, 0); // Place tiles in a row along the X-axis
-    scene.add(tile);
-    tiles.push(tile);
+  const tile = createTile();
+  tile.position.set(i * tileSize, 0, 0); // Place tiles in a row along the X-axis
+  scene.add(tile);
+  tiles.push(tile);
 }
 
 // Animation loop
 function animate() {
-    requestAnimationFrame(animate);
+  requestAnimationFrame(animate);
 
-    updateCarMovement();
+  playerCar.updateCarMovement();
 
-    camera.position.copy(playerCar.position).add(new THREE.Vector3(-20, 0, 16));
-    camera.lookAt(playerCar.position);
+  camera.position
+    .copy(playerCar.car.position)
+    .add(new THREE.Vector3(-20, 0, 16));
+  camera.lookAt(playerCar.car.position);
 
-    // Render the scene
-    renderer.render(scene, camera);
+  // Render the scene
+  renderer.render(scene, camera);
 }
 
-animate();
+manager.onLoad = function () {
+  console.log("All items loaded.");
+  animate();
+};
 
 //-----------------------------------------------------------------------------------------
 //
@@ -80,9 +87,9 @@ animate();
 //-----------------------------------------------------------------------------------------
 
 function createTile() {
-    const tileGeometry = new THREE.PlaneGeometry(40, 40);
-    const tileMaterial = new THREE.MeshBasicMaterial({ color: 0x808080 });
-    const tile = new THREE.Mesh(tileGeometry, tileMaterial);
+  const tileGeometry = new THREE.PlaneGeometry(40, 40);
+  const tileMaterial = new THREE.MeshBasicMaterial({ color: 0x808080 });
+  const tile = new THREE.Mesh(tileGeometry, tileMaterial);
 
-    return tile;
+  return tile;
 }
