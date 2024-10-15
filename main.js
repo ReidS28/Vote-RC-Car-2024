@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { Car } from "./car.js";
 import { createCamera } from "./camera.js";
+import { Tile } from "./tile.js";
 import "./style.css";
 
 //-----------------------------------------------------------------------------------------
@@ -29,7 +30,20 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+window.addEventListener("resize", onWindowResize, false);
+
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
 let manager = new THREE.LoadingManager();
+manager.onLoad = function () {
+  console.log("All items loaded.");
+  animate();
+};
 
 //-----------------------------------------------------------------------------------------
 //
@@ -54,10 +68,10 @@ const tileSize = 40;
 const numberOfTiles = 5;
 
 for (let i = 0; i < numberOfTiles; i++) {
-  const tile = createTile();
-  tile.position.set(i * tileSize, 0, 0); // Place tiles in a row along the X-axis
-  scene.add(tile);
-  tiles.push(tile);
+  const tile = new Tile();
+  tile.tile.position.set(i * tileSize, 0, 0); // Access tile's position
+  scene.add(tile.tile); // Add tile to the scene
+  tiles.push(tile.tile); // Store the tile in the tiles array
 }
 
 // Animation loop
@@ -75,21 +89,8 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-manager.onLoad = function () {
-  console.log("All items loaded.");
-  animate();
-};
-
 //-----------------------------------------------------------------------------------------
 //
 //   *** Functions ***
 //
 //-----------------------------------------------------------------------------------------
-
-function createTile() {
-  const tileGeometry = new THREE.PlaneGeometry(40, 40);
-  const tileMaterial = new THREE.MeshBasicMaterial({ color: 0x808080 });
-  const tile = new THREE.Mesh(tileGeometry, tileMaterial);
-
-  return tile;
-}

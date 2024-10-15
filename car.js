@@ -2,9 +2,9 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 export class Car {
-  constructor() {
+  constructor(manager) {
     // Car-related variables
-    this.loader = new GLTFLoader();
+    this.loader = new GLTFLoader(manager);
     this.car = new THREE.Group();
     this.keys = {
       left: false,
@@ -13,14 +13,10 @@ export class Car {
     this.maxTurnSpeed = 0.03;
     this.maxTurnAngle = Math.PI / 4;
     this.turnSensitivity = 0.006;
-    //let speed = 0;
-    this.speed = 0.4;
+    this.speed = 0.6;
     this.turnSpeed = 0;
 
-    // Create the car
-    this.createCar();
-    // Set up controls
-    this.setupControls();
+    this.timer = 0;
   }
 
   createCar() {
@@ -112,5 +108,16 @@ export class Car {
       -this.maxTurnAngle,
       Math.min(this.car.rotation.z, this.maxTurnAngle)
     );
+
+    this.timer++;
+    if (this.timer >= 1000) {
+      this.speedUp();
+      this.timer = 0;
+    }
+  }
+
+  speedUp() {
+    this.speed += 0.4;
+    console.log("speed up!!");
   }
 }
