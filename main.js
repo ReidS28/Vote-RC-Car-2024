@@ -4,6 +4,11 @@ import { createCamera } from "./camera.js";
 import { Tile } from "./tile.js";
 import "./style.css";
 
+// ------------------------------------------------------------
+// *** Scene Setup ***
+// ------------------------------------------------------------
+const running = false;
+
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x71bce1);
 
@@ -35,8 +40,11 @@ manager.onLoad = function () {
 	animate();
 };
 
-const axesHelper = new THREE.AxesHelper(100);
-scene.add(axesHelper);
+// ------------------------------------------------------------
+// *** Main Program ***
+// ------------------------------------------------------------
+
+let score = 0;
 
 const playerCar = new Car(manager);
 scene.add(playerCar.car);
@@ -48,39 +56,45 @@ let farthestTileX = numberOfTiles * tileSize;
 
 // Create initial tiles
 for (let i = 0; i < numberOfTiles; i++) {
-	const tile = new Tile(tileSize);
+	const tile = new Tile(tileSize, manager);
 	tile.tile.position.set(i * tileSize, 0, 0);
 	scene.add(tile.tile);
 	tiles.push(tile);
 }
 
+
 function animate() {
-	requestAnimationFrame(animate);
+    if(running){
 
-	const delta = clock.getDelta();
-
-	playerCar.updateCarMovement(delta);
-
-	if (playerCar.car) {
-		camera.position
+        requestAnimationFrame(animate);
+        
+        const delta = clock.getDelta();
+        
+        playerCar.updateCarMovement(delta);
+        
+        if (playerCar.car) {
+            camera.position
 			.copy(playerCar.car.position)
 			.add(new THREE.Vector3(-16, 0, 16));
-        //    .add(new THREE.Vector3(-50, 0, 30));
-		camera.position.y *= 0.6;
-		camera.lookAt(
-			playerCar.car.position.clone().add(new THREE.Vector3(10, 0, 0))
-		);
-
-		checkForNewTiles();
-		removeOldTiles();
+            camera.position.y *= 0.4;
+            camera.lookAt(
+                playerCar.car.position.clone().add(new THREE.Vector3(10, 0, 0))
+            );
+            
+            checkForNewTiles();
+            removeOldTiles();
+        }
 	}
 
+    score = Math.floor(playerCar.speed - 30);
+
 	renderer.render(scene, camera);
+    updateHTML();
 }
 
 function checkForNewTiles() {
 	if (playerCar.car.position.x > farthestTileX - numberOfTiles * tileSize) {
-		const tile = new Tile(tileSize);
+		const tile = new Tile(tileSize, manager);
 		tile.tile.position.set(farthestTileX, 0, 0);
 		scene.add(tile.tile);
 		tiles.push(tile);
@@ -101,3 +115,11 @@ function removeOldTiles() {
 }
 
 animate();
+
+// ------------------------------------------------------------
+// *** Functions ***
+// ------------------------------------------------------------
+
+function updateHTML(){
+    document.getElementById('Score').innerText = Math.round(score);
+}

@@ -31,9 +31,7 @@ export class Car {
 				this.car.add(gltf.scene);
 				console.log("Car model loaded successfully.");
 			},
-			(xhr) => {
-            
-			},
+			(xhr) => {},
 			(error) => {
 				console.error("An error occurred while loading the car model:", error);
 			}
@@ -79,36 +77,36 @@ export class Car {
 
 		this.car.position.y += Math.sin(this.car.rotation.z) * this.speed * delta;
 		this.car.position.x += Math.cos(this.car.rotation.z) * this.speed * delta;
-        
+
 		if (this.keys.left || this.keys.right) {
-            if (this.keys.left) {
-                this.turnSpeed += this.turnSensitivity;
+			if (this.keys.left) {
+				this.turnSpeed += this.turnSensitivity;
 			}
 			if (this.keys.right) {
-                this.turnSpeed -= this.turnSensitivity;
+				this.turnSpeed -= this.turnSensitivity;
 			}
 		} else {
-            this.turnSpeed *= 0.9;
+			this.turnSpeed *= 0.9;
 			this.car.rotation.z *= 0.96;
 		}
-        
+
 		this.turnSpeed = Math.max(
-            -this.maxTurnSpeed,
+			-this.maxTurnSpeed,
 			Math.min(this.turnSpeed, this.maxTurnSpeed)
 		);
 		this.car.rotation.z += this.turnSpeed;
 		this.car.rotation.x = this.turnSpeed * -1.6;
 		this.car.rotation.z = Math.max(
-            -this.maxTurnAngle,
+			-this.maxTurnAngle,
 			Math.min(this.car.rotation.z, this.maxTurnAngle)
 		);
 
-        this.checkCollisionWithWalls();
-        
+		this.checkCollisionWithWalls();
+
 		this.timer += delta;
-		if (this.timer >= 5) {
-            // 1 = 1 second
-			this.speed += 10;
+		if (this.timer >= 1) {
+			// 1 = 1 second
+			this.speed += 0.5;
 			console.log("Speed Up: " + this.speed);
 			this.timer = 0;
 		}
@@ -117,9 +115,17 @@ export class Car {
 	}
 
 	checkCollisionWithWalls() {
+		// left wall
 		if (this.boundingBox.max.y > 12.7) {
-			//this.turnSpeed *= -0.6;
-            this.car.rotation.z *= 0.8;
+            this.car.rotation.z = THREE.MathUtils.lerp(this.car.rotation.z, -Math.abs(this.car.rotation.z) - 0.04, 0.1)
+            this.turnSpeed = -Math.abs(this.turnSpeed);
 		}
+
+        // right wall
+		if (this.boundingBox.min.y < -12.7) {
+            this.car.rotation.z = THREE.MathUtils.lerp(this.car.rotation.z, Math.abs(this.car.rotation.z) + 0.04, 0.1)
+            this.turnSpeed =Math.abs(this.turnSpeed);
+		}
+
 	}
 }
