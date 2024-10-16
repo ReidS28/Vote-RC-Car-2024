@@ -33,16 +33,16 @@ document.body.appendChild(renderer.domElement);
 window.addEventListener("resize", onWindowResize, false);
 
 function onWindowResize() {
-	camera.aspect = window.innerWidth / window.innerHeight;
-	camera.updateProjectionMatrix();
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
 
-	renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 let manager = new THREE.LoadingManager();
 manager.onLoad = function () {
-	console.log("All items loaded.");
-	animate();
+  console.log("All items loaded.");
+  animate();
 };
 
 //-----------------------------------------------------------------------------------------
@@ -68,29 +68,29 @@ const tileSize = 40;
 const numberOfTiles = 50;
 
 for (let i = 0; i < numberOfTiles; i++) {
-	const nextTile = new Tile(tileSize);
-	nextTile.tile.position.set(i * tileSize, 0, 0); // Access tile's position
-	scene.add(nextTile.tile); // Add tile to the scene
-	tiles.push(nextTile.tile); // Store the tile in the tiles array
+  const nextTile = new Tile(tileSize);
+  nextTile.tile.position.set(i * tileSize, 0, 0); // Access tile's position
+  scene.add(nextTile.tile); // Add tile to the scene
+  tiles.push(nextTile.tile); // Store the tile in the tiles array
 }
 
 const clock = new THREE.Clock();
 
 // Animation loop
 function animate() {
-	requestAnimationFrame(animate);
+  requestAnimationFrame(animate);
 
-    const delta = clock.getDelta();
+  const delta = clock.getDelta();
 
-	playerCar.updateCarMovement(delta);
+  playerCar.updateCarMovement(delta);
 
-	camera.position
-		.copy(playerCar.car.position)
-		.add(new THREE.Vector3(-20, 0, 16));
-	camera.lookAt(playerCar.car.position);
+  camera.position
+    .copy(playerCar.car.position)
+    .add(new THREE.Vector3(-18, 0, 12));
+  camera.lookAt(playerCar.car.position);
 
-	// Render the scene
-	renderer.render(scene, camera);
+  // Render the scene
+  renderer.render(scene, camera);
 }
 
 //-----------------------------------------------------------------------------------------
