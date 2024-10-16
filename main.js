@@ -65,20 +65,24 @@ playerCar.setupControls();
 // Tile setup
 const tiles = [];
 const tileSize = 40;
-const numberOfTiles = 5;
+const numberOfTiles = 50;
 
 for (let i = 0; i < numberOfTiles; i++) {
-	const tile = new Tile();
-	tile.tile.position.set(i * tileSize, 0, 0); // Access tile's position
-	scene.add(tile.tile); // Add tile to the scene
-	tiles.push(tile.tile); // Store the tile in the tiles array
+	const nextTile = new Tile(tileSize);
+	nextTile.tile.position.set(i * tileSize, 0, 0); // Access tile's position
+	scene.add(nextTile.tile); // Add tile to the scene
+	tiles.push(nextTile.tile); // Store the tile in the tiles array
 }
+
+const clock = new THREE.Clock();
 
 // Animation loop
 function animate() {
 	requestAnimationFrame(animate);
 
-	playerCar.updateCarMovement();
+    const delta = clock.getDelta();
+
+	playerCar.updateCarMovement(delta);
 
 	camera.position
 		.copy(playerCar.car.position)

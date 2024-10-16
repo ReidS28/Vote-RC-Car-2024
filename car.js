@@ -10,10 +10,10 @@ export class Car {
 			left: false,
 			right: false,
 		};
-		this.maxTurnSpeed = 0.03;
+		this.maxTurnSpeed = 3;
 		this.maxTurnAngle = Math.PI / 4;
-		this.turnSensitivity = 0.006;
-		this.speed = 0.6;
+		this.turnSensitivity = 0.6;
+		this.speed = 40;
 		this.turnSpeed = 0;
 
 		this.timer = 0;
@@ -79,43 +79,44 @@ export class Car {
 		});
 	}
 
-	updateCarMovement() {
-		if (!this.car) return; // Wait for the car to load
-		this.car.position.y += Math.sin(this.car.rotation.z) * this.speed;
-		this.car.position.x += Math.cos(this.car.rotation.z) * this.speed;
+	updateCarMovement(delta) {
+        if (!this.car) return; // Wait for the car to load
+    
+        // Move the car forward based on its rotation
+        this.car.position.y += Math.sin(this.car.rotation.z) * this.speed * delta;
+        this.car.position.x += Math.cos(this.car.rotation.z) * this.speed * delta;
+    
+        // Handle turning logic
+        if (this.keys.left || this.keys.right) {
+            if (this.keys.left) {
+                this.turnSpeed += this.turnSensitivity;
+            }
+            if (this.keys.right) {
+                this.turnSpeed -= this.turnSensitivity;
+            }
+        } else {
+            // Slowly reduce turning speed if no key is pressed
+            this.turnSpeed *= 0.9;
+            this.car.rotation.z *= 0.98;
+        }
 
-		if (this.keys.left || this.keys.right) {
-			if (this.keys.left) {
-				this.turnSpeed += this.turnSensitivity;
-			}
-			if (this.keys.right) {
-				this.turnSpeed -= this.turnSensitivity;
-			}
-		} else {
-			this.turnSpeed *= 0.9;
-			this.car.rotation.z *= 0.96;
-		}
+        this.turnSpeed = Math.max(-this.maxTurnSpeed, Math.min(this.turnSpeed, this.maxTurnSpeed));
 
-		this.turnSpeed = Math.max(
-			-this.maxTurnSpeed,
-			Math.min(this.turnSpeed, this.maxTurnSpeed)
-		);
-		this.car.rotation.z += this.turnSpeed;
-		this.car.rotation.x = this.turnSpeed * -1.6;
-		this.car.rotation.z = Math.max(
-			-this.maxTurnAngle,
-			Math.min(this.car.rotation.z, this.maxTurnAngle)
-		);
+        this.car.rotation.z += this.turnSpeed * delta;
 
-		this.timer++;
-		if (this.timer >= 1000) {
-			this.speedUp();
-			this.timer = 0;
-		}
-	}
-
+        this.car.rotation.x = this.turnSpeed * .01;
+    
+        this.car.rotation.z = Math.max(-this.maxTurnAngle, Math.min(this.car.rotation.z, this.maxTurnAngle));
+    
+        this.timer += delta;
+        if (this.timer >= 10) { // 1 = 1 second
+            this.speedUp();
+            this.timer = 0;
+        }
+    }
+    
 	speedUp() {
-		this.speed += 0.4;
-		console.log("speed up!!");
+		this.speed += 10;
+		console.log("speed up:" + this.speed);
 	}
 }
