@@ -17,7 +17,7 @@ export class Tile {
 
     // Load the texture
     const textureLoader = new THREE.TextureLoader();
-    const texture = textureLoader.load('assets/road.jpg'); // Replace with your texture path
+    const texture = textureLoader.load("assets/road.png"); // Replace with your texture path
 
     // Create a material using the loaded texture
     const tileMaterial = new THREE.MeshBasicMaterial({ map: texture });
@@ -29,6 +29,13 @@ export class Tile {
 
     // Add the plane to the tile group
     this.tile.add(plane);
+
+    const wallMaterial = new THREE.MeshBasicMaterial({ color: 0x808080 });
+
+    const leftWallGeometry = new THREE.BoxGeometry(40, 10, 20);
+    const leftWall = new THREE.Mesh(leftWallGeometry, wallMaterial);
+
+    this.tile.add(leftWall); // Add the wall to the tile
   }
 
   // Method to return the group
