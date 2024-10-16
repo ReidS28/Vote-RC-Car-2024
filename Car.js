@@ -117,9 +117,17 @@ export class Car {
 	}
 
 	checkCollisionWithWalls() {
+		// left wall
 		if (this.boundingBox.max.y > 12.7) {
-			//this.turnSpeed *= -0.6;
-            this.car.rotation.z *= 0.8;
+            this.car.rotation.z = THREE.MathUtils.lerp(this.car.rotation.z, -Math.abs(this.car.rotation.z) - 0.04, 0.1)
+            this.turnSpeed = -Math.abs(this.turnSpeed);
 		}
+
+        // right wall
+		if (this.boundingBox.min.y < -12.7) {
+            this.car.rotation.z = THREE.MathUtils.lerp(this.car.rotation.z, Math.abs(this.car.rotation.z) + 0.04, 0.1)
+            this.turnSpeed =Math.abs(this.turnSpeed);
+		}
+
 	}
 }
