@@ -12,7 +12,7 @@ export class Car {
     this.maxTurnSpeed = 0.03;
     this.maxTurnAngle = Math.PI / 4;
     this.turnSensitivity = 0.006;
-    this.speed = 0.4;
+    this.speed = 0.04;
     this.turnSpeed = 0;
     this.boundingBox = new THREE.Box3();
 
@@ -29,7 +29,7 @@ export class Car {
         gltf.scene.position.z = 1.4;
         gltf.scene.rotation.x = Math.PI / 2;
         gltf.scene.rotation.y = Math.PI / -2;
-        const scaleFactor = 30;
+        const scaleFactor = 28;
         gltf.scene.scale.set(scaleFactor, scaleFactor, scaleFactor);
         // Add the loaded model to the car group
         this.car.add(gltf.scene);
@@ -125,8 +125,8 @@ export class Car {
       const wallBoundingBox = new THREE.Box3().setFromObject(wall);
       if (this.boundingBox.intersectsBox(wallBoundingBox)) {
         console.log("Collision detected with wall");
-        this.car.rotation.z = 0; // Turn car towards 0
         this.turnSpeed = 0; // Stop turning
+        this.car.rotation.z *= 0.9; // Turn car towards 0
       }
     }
   }

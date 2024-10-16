@@ -68,7 +68,7 @@ function animate() {
   if (playerCar.car) {
     camera.position
       .copy(playerCar.car.position)
-      .add(new THREE.Vector3(-20, 0, 16));
+      .add(new THREE.Vector3(-10, 0, 16));
     camera.lookAt(playerCar.car.position);
   }
 
