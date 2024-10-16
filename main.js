@@ -68,8 +68,11 @@ function animate() {
   if (playerCar.car) {
     camera.position
       .copy(playerCar.car.position)
-      .add(new THREE.Vector3(-10, 0, 16));
-    camera.lookAt(playerCar.car.position);
+      .add(new THREE.Vector3(-16, 0, 16));
+    camera.position.y *= 0.6;
+    camera.lookAt(
+      playerCar.car.position.clone().add(new THREE.Vector3(10, 0, 0))
+    );
   }
 
   playerCar.checkCollisionWithWalls(walls);

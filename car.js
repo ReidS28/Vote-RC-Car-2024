@@ -12,7 +12,7 @@ export class Car {
     this.maxTurnSpeed = 0.03;
     this.maxTurnAngle = Math.PI / 4;
     this.turnSensitivity = 0.006;
-    this.speed = 0.04;
+    this.speed = 0.4;
     this.turnSpeed = 0;
     this.boundingBox = new THREE.Box3();
 
@@ -121,10 +121,9 @@ export class Car {
   checkCollisionWithWalls(walls) {
     this.updateBoundingBox();
 
-    for (let wall of walls) {
-      const wallBoundingBox = new THREE.Box3().setFromObject(wall);
-      if (this.boundingBox.intersectsBox(wallBoundingBox)) {
-        console.log("Collision detected with wall");
+      if (
+        this.boundingBox.intersectsBox(new THREE.Box3().setFromObject(wall))
+      ) {
         this.turnSpeed = 0; // Stop turning
         this.car.rotation.z *= 0.9; // Turn car towards 0
       }
