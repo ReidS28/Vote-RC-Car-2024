@@ -62,36 +62,40 @@ scene.add(playerCar.createCar()); // Add the car to the scene
 // Setup controls for the car
 playerCar.setupControls();
 
+const clock = new THREE.Clock();
+
 // Tile setup
 const tiles = [];
 const tileSize = 40;
 const numberOfTiles = 50;
 
 for (let i = 0; i < numberOfTiles; i++) {
-  const nextTile = new Tile(tileSize);
-  nextTile.tile.position.set(i * tileSize, 0, 0); // Access tile's position
-  scene.add(nextTile.tile); // Add tile to the scene
-  tiles.push(nextTile.tile); // Store the tile in the tiles array
+  const tile = new Tile(tileSize);
+  tile.getTileGroup().position.set(i * tileSize, 0, 0); // Place tiles in a row along the X-axis
+  scene.add(tile.getTileGroup());
+  tiles.push(tile);
+  // Add walls to the walls array for collision detection
+  tile.tile.children.forEach(child => {
+      if (child.name === 'leftWall' || child.name === 'rightWall') {
+          walls.push(child);
+      }
+  });
 }
-
-const clock = new THREE.Clock();
 
 // Animation loop
 function animate() {
   requestAnimationFrame(animate);
+  playerCar.updateCarMovement(); // Update car movement
 
-  const delta = clock.getDelta();
+  // Check if playerCar is loaded before updating the camera
+  if (playerCar.car) {
+      camera.position.copy(playerCar.car.position).add(new THREE.Vector3(-20, 0, 16));
+      camera.lookAt(playerCar.car.position);
+  }
 
-  playerCar.updateCarMovement(delta);
+  playerCar.checkCollisionWithWalls(walls); // Check for collisions
 
-  camera.position
-    .copy(playerCar.car.position)
-    .add(new THREE.Vector3(-18, 0, 12));
-  camera.lookAt(playerCar.car.position);
-
-  // Render the scene
   renderer.render(scene, camera);
-}
 
 //-----------------------------------------------------------------------------------------
 //
