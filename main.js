@@ -33,16 +33,16 @@ document.body.appendChild(renderer.domElement);
 window.addEventListener("resize", onWindowResize, false);
 
 function onWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
 
-  renderer.setSize(window.innerWidth, window.innerHeight);
+	renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 let manager = new THREE.LoadingManager();
 manager.onLoad = function () {
-  console.log("All items loaded.");
-  animate();
+	console.log("All items loaded.");
+	animate();
 };
 
 //-----------------------------------------------------------------------------------------
@@ -68,25 +68,25 @@ const tileSize = 40;
 const numberOfTiles = 5;
 
 for (let i = 0; i < numberOfTiles; i++) {
-  const tile = new Tile();
-  tile.tile.position.set(i * tileSize, 0, 0); // Access tile's position
-  scene.add(tile.tile); // Add tile to the scene
-  tiles.push(tile.tile); // Store the tile in the tiles array
+	const tile = new Tile();
+	tile.tile.position.set(i * tileSize, 0, 0); // Access tile's position
+	scene.add(tile.tile); // Add tile to the scene
+	tiles.push(tile.tile); // Store the tile in the tiles array
 }
 
 // Animation loop
 function animate() {
-  requestAnimationFrame(animate);
+	requestAnimationFrame(animate);
 
-  playerCar.updateCarMovement();
+	playerCar.updateCarMovement();
 
-  camera.position
-    .copy(playerCar.car.position)
-    .add(new THREE.Vector3(-20, 0, 16));
-  camera.lookAt(playerCar.car.position);
+	camera.position
+		.copy(playerCar.car.position)
+		.add(new THREE.Vector3(-20, 0, 16));
+	camera.lookAt(playerCar.car.position);
 
-  // Render the scene
-  renderer.render(scene, camera);
+	// Render the scene
+	renderer.render(scene, camera);
 }
 
 //-----------------------------------------------------------------------------------------
