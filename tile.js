@@ -32,10 +32,18 @@ export class Tile {
 
     const wallMaterial = new THREE.MeshBasicMaterial({ color: 0x808080 });
 
-    const leftWallGeometry = new THREE.BoxGeometry(40, 10, 20);
-    const leftWall = new THREE.Mesh(leftWallGeometry, wallMaterial);
+    const wallGeometry = new THREE.BoxGeometry(40, 7, 20);
+    const leftWall = new THREE.Mesh(wallGeometry, wallMaterial);
+    const rightWall = new THREE.Mesh(wallGeometry, wallMaterial);
+
+    leftWall.position.y = 16.2;
+    leftWall.position.z = 10;
+
+    rightWall.position.y = -16.2;
+    rightWall.position.z = 10;
 
     this.tile.add(leftWall); // Add the wall to the tile
+    this.tile.add(rightWall); // Add the wall to the tile
   }
 
   // Method to return the group
