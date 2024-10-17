@@ -7,8 +7,6 @@ import "./style.css";
 // ------------------------------------------------------------
 // *** Scene Setup ***
 // ------------------------------------------------------------
-const running = false;
-
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x71bce1);
 
@@ -36,8 +34,7 @@ const clock = new THREE.Clock();
 
 let manager = new THREE.LoadingManager();
 manager.onLoad = function () {
-	console.log("All items loaded.");
-	animate();
+	startAnimation();  // Start animation after loading
 };
 
 // ------------------------------------------------------------
@@ -55,46 +52,64 @@ const numberOfTiles = 20;
 let farthestTileX = numberOfTiles * tileSize;
 
 // Create initial tiles
-for (let i = 0; i < numberOfTiles; i++) {
-	const tile = new Tile(tileSize, manager);
+for (let i = 0; i < 2; i++) {
+	const tile = new Tile(tileSize, 5,  manager);
+	tile.tile.position.set(i * tileSize, 0, 0);
+	scene.add(tile.tile);
+	tiles.push(tile);
+}
+for (let i = 2; i < numberOfTiles; i++) {
+	const tile = new Tile(tileSize, Math.floor((Math.random() * 11)),  manager);
 	tile.tile.position.set(i * tileSize, 0, 0);
 	scene.add(tile.tile);
 	tiles.push(tile);
 }
 
+// Animation loop control
+let isAnimating = false;
+
+function startAnimation() {
+	if (!isAnimating) {
+		isAnimating = true;  // Prevent multiple calls
+		console.log("Animation Started")
+		animate();
+	}
+}
+
+function stopAnimation() {
+	isAnimating = false;  // Set flag to false to stop
+}
 
 function animate() {
-    if(running){
+	if (!isAnimating) return;  // Stop if not animating
 
-        requestAnimationFrame(animate);
-        
-        const delta = clock.getDelta();
-        
-        playerCar.updateCarMovement(delta);
-        
-        if (playerCar.car) {
-            camera.position
-			.copy(playerCar.car.position)
-			.add(new THREE.Vector3(-16, 0, 16));
-            camera.position.y *= 0.4;
-            camera.lookAt(
-                playerCar.car.position.clone().add(new THREE.Vector3(10, 0, 0))
-            );
-            
-            checkForNewTiles();
-            removeOldTiles();
-        }
-	}
+	requestAnimationFrame(animate);
 
-    score = Math.floor(playerCar.speed - 30);
+	const delta = clock.getDelta();
+
+	playerCar.updateCarMovement(delta);
+
+	camera.position
+		.copy(playerCar.car.position)
+		.add(new THREE.Vector3(-16, 0, 16));
+		//.add(new THREE.Vector3(-16, 0, 0));
+	camera.position.y *= 0.4;
+	camera.lookAt(
+		playerCar.car.position.clone().add(new THREE.Vector3(10, 0, 0))
+	);
+
+	checkForNewTiles();
+	removeOldTiles();
+
+	score = Math.floor(playerCar.speed - 30);
 
 	renderer.render(scene, camera);
-    updateHTML();
+	updateHTML();
 }
 
 function checkForNewTiles() {
 	if (playerCar.car.position.x > farthestTileX - numberOfTiles * tileSize) {
-		const tile = new Tile(tileSize, manager);
+		const tile = new Tile(tileSize, Math.floor((Math.random() * 11)), manager);
 		tile.tile.position.set(farthestTileX, 0, 0);
 		scene.add(tile.tile);
 		tiles.push(tile);
@@ -114,12 +129,10 @@ function removeOldTiles() {
 	}
 }
 
-animate();
-
 // ------------------------------------------------------------
 // *** Functions ***
 // ------------------------------------------------------------
 
-function updateHTML(){
-    document.getElementById('Score').innerText = Math.round(score);
+function updateHTML() {
+	document.getElementById("Score").innerText = Math.round(score);
 }

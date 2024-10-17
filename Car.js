@@ -30,12 +30,6 @@ export class Car {
 				// Add the loaded model to the car group
 				this.car.add(gltf.scene);
 				console.log("Car model loaded successfully.");
-			},
-			(xhr) => {
-            
-			},
-			(error) => {
-				console.error("An error occurred while loading the car model:", error);
 			}
 		);
 
@@ -106,9 +100,9 @@ export class Car {
         this.checkCollisionWithWalls();
         
 		this.timer += delta;
-		if (this.timer >= 5) {
+		if (this.timer >= 1) {
             // 1 = 1 second
-			this.speed += 10;
+			this.speed += 0.5;
 			console.log("Speed Up: " + this.speed);
 			this.timer = 0;
 		}

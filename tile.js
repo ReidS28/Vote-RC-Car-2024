@@ -2,15 +2,15 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 export class Tile {
-	constructor(tileSize, manager) {
-    this.loader = new GLTFLoader(manager);
+	constructor(tileSize, type, manager) {
+		this.loader = new GLTFLoader(manager);
 		const textureLoader = new THREE.TextureLoader(manager);
-    
+
 		this.tile = new THREE.Group();
 		this.size = tileSize;
-		
-    // Create tile
-    const tileGeometry = new THREE.PlaneGeometry(this.size, this.size);
+
+		// Create tile
+		const tileGeometry = new THREE.PlaneGeometry(this.size, this.size);
 		const texture = textureLoader.load("assets/road.png");
 		const tileMaterial = new THREE.MeshBasicMaterial({ map: texture });
 		const plane = new THREE.Mesh(tileGeometry, tileMaterial);
@@ -29,25 +29,45 @@ export class Tile {
 		rightWall.name = "rightWall";
 		this.tile.add(leftWall);
 		this.tile.add(rightWall);
+
+		if (type == 0){
+
+		}else if (type == 1){
+			this.createBarrier(0, 8.4);
+			this.createBarrier(0, 0);
+		}else if (type == 2){
+			this.createBarrier(20, -8.4);
+		}else if (type == 3){
+			this.createBarrier(10, -8.4);
+			this.createBarrier(30, 8.4);
+		}else if (type == 4){
+			this.createBarrier(20, 0);
+		}else if (type == 5){
+			this.createBarrier(20, 0);
+			this.createBarrier(20 -8.4);
+		}else if (type == 6){
+			this.createBarrier(10, 8.4);
+		}else if (type == 7){
+			this.createBarrier(30, -8.4);
+		}else if (type == 8){
+			this.createBarrier(0, 0);
+		}else if (type == 9){
+			this.createBarrier(20, -8.4);
+		}else if (type == 10){
+			this.createBarrier(0, 8.4);
+		}
 	}
 
-  createBarier(x, y){
-    this.loader.load(
-			"assets/road_barrier.glb",
-			(gltf) => {
-				gltf.scene.position.z = 1.4;
-				gltf.scene.rotation.x = Math.PI / 2;
-				gltf.scene.rotation.y = Math.PI / -2;
-				const scaleFactor = 28;
-				gltf.scene.scale.set(scaleFactor, scaleFactor, scaleFactor);
-				// Add the loaded model to the car group
-				this.car.add(gltf.scene);
-				console.log("Car model loaded successfully.");
-			},
-			(xhr) => {},
-			(error) => {
-				console.error("An error occurred while loading the car model:", error);
-			});
-  }
+	createBarrier(x, y) {
+
+		this.loader.load("assets/road_barrier.glb", (gltf) => {
+			gltf.scene.position.set(x, y, 0);
+			gltf.scene.rotation.x = Math.PI / 2;
+			gltf.scene.rotation.y = Math.PI / -2;
+			const scaleFactor = 2;
+			gltf.scene.scale.set(scaleFactor, scaleFactor, scaleFactor);
+			this.tile.add(gltf.scene);
+		});
+	}
 
 }
