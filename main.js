@@ -20,7 +20,8 @@ scene.add(dirLight);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+document.getElementById('app').appendChild(renderer.domElement);
+
 
 window.addEventListener("resize", onWindowResize, false);
 
@@ -42,6 +43,8 @@ manager.onLoad = function () {
 // ------------------------------------------------------------
 
 let score = 0;
+let collisionTimer = 0;
+let health = 11;
 
 const playerCar = new Car(manager);
 scene.add(playerCar.car);
@@ -52,13 +55,13 @@ const numberOfTiles = 20;
 let farthestTileX = numberOfTiles * tileSize;
 
 // Create initial tiles
-for (let i = 0; i < 2; i++) {
-	const tile = new Tile(tileSize, 5,  manager);
+for (let i = 0; i < 4; i++) {
+	const tile = new Tile(tileSize, 0,  manager);
 	tile.tile.position.set(i * tileSize, 0, 0);
 	scene.add(tile.tile);
 	tiles.push(tile);
 }
-for (let i = 2; i < numberOfTiles; i++) {
+for (let i = 4; i < numberOfTiles; i++) {
 	const tile = new Tile(tileSize, Math.floor((Math.random() * 11)),  manager);
 	tile.tile.position.set(i * tileSize, 0, 0);
 	scene.add(tile.tile);
@@ -81,7 +84,7 @@ function stopAnimation() {
 }
 
 function animate() {
-	if (!isAnimating) return;  // Stop if not animating
+	if (!isAnimating) return;
 
 	requestAnimationFrame(animate);
 
@@ -89,10 +92,12 @@ function animate() {
 
 	playerCar.updateCarMovement(delta);
 
+	checkCollisions();
+	collisionTimer--;
+
 	camera.position
 		.copy(playerCar.car.position)
 		.add(new THREE.Vector3(-16, 0, 16));
-		//.add(new THREE.Vector3(-16, 0, 0));
 	camera.position.y *= 0.4;
 	camera.lookAt(
 		playerCar.car.position.clone().add(new THREE.Vector3(10, 0, 0))
@@ -129,10 +134,42 @@ function removeOldTiles() {
 	}
 }
 
+function checkCollisions() {
+
+    for (const tile of tiles) {
+        if (tile.barriers) {
+            for (const barrier of tile.barriers) {
+                const barrierBoundingBox = new THREE.Box3().setFromObject(barrier);
+                if (playerCar.boundingBox.intersectsBox(barrierBoundingBox)) {
+                    carCrash();
+                }
+            }
+        }
+    }
+}
+
+
 // ------------------------------------------------------------
 // *** Functions ***
 // ------------------------------------------------------------
 
+function carCrash() {
+	if (collisionTimer <= 0){
+		health--;
+		collisionTimer = 20;
+	} 
+	if (health <= 0){
+		stopAnimation();
+		document.getElementById("finalScore").innerText = score;
+		document.getElementById("gameOverMenu").style.display = "flex"; 
+	};
+}
+
 function updateHTML() {
 	document.getElementById("Score").innerText = Math.round(score);
+	document.getElementById("Health").innerText = health;
 }
+
+document.getElementById("restartButton").addEventListener("click", () => {
+    location.reload(); // Reloads the current page
+});

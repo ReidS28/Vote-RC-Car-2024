@@ -1,31 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1.0"
-		/>
-		<title>Three.js Game</title>
-	</head>
-	<body>
-		<div id="app"></div>
-		<div
-			id="hud"
-			style="
-				position: absolute;
-				top: 20px;
-				left: 20px;
-				color: white;
-				font-size: 24px;
-			"
-		>
-			Score: <span id="Score">0</span>
-		</div>
-
-		<script
-			type="module"
-			src="/main.js"
-		></script>
-	</body>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Three.js Game</title>
+    <link rel="stylesheet" href="style.css" /> <!-- Link to your CSS -->
+</head>
+<body>
+    <div id="app"></div> <!-- This is where the game canvas will be appended -->
+    <div id="hud" style="position: absolute; top: 20px; left: 20px; color: white; font-size: 24px;">
+        Score: <span id="Score">0</span><br />
+        Health: <span id="Health">10</span>
+    </div>
+    <div id="gameOverMenu" class="menu" style="display: none;">
+        <div class="menu-content">
+            <h2>Game Over</h2>
+            <p>Your score: <span id="finalScore"></span></p>
+			<h1>VOTE RC VEHICLE</h1>
+            <button id="restartButton">Play Again</button>
+        </div>
+    </div>
+    <script type="module" src="/main.js"></script>
+</body>
 </html>

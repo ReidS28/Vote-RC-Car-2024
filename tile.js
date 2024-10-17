@@ -48,7 +48,7 @@ export class Tile {
 		}else if (type == 6){
 			this.createBarrier(10, 8.4);
 		}else if (type == 7){
-			this.createBarrier(30, -8.4);
+			this.createBarrier(10, -8.4);
 		}else if (type == 8){
 			this.createBarrier(0, 0);
 		}else if (type == 9){
@@ -59,15 +59,23 @@ export class Tile {
 	}
 
 	createBarrier(x, y) {
-
 		this.loader.load("assets/road_barrier.glb", (gltf) => {
 			gltf.scene.position.set(x, y, 0);
 			gltf.scene.rotation.x = Math.PI / 2;
 			gltf.scene.rotation.y = Math.PI / -2;
 			const scaleFactor = 2;
 			gltf.scene.scale.set(scaleFactor, scaleFactor, scaleFactor);
+			
 			this.tile.add(gltf.scene);
+	
+			// Optionally, store the barrier in an array for later collision checks
+			if (!this.barriers) {
+				this.barriers = [];
+			}
+			this.barriers.push(gltf.scene);
 		});
 	}
+	
+	
 
 }
